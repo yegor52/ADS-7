@@ -3,6 +3,7 @@
 #define INCLUDE_TPQUEUE_H_
 
 #include <cstdint>
+#include <stdexcept>
 
 template<typename T>
 class TPQueue {
@@ -11,46 +12,46 @@ class TPQueue {
         T data;
         VAL *next;
     };
-
     TPQueue::VAL *create(const T &);
-
-    VAL *head;
-    VAL *tail;
-
+    VAL *hd;
+    VAL *tl;
  public:
-    TPQueue() : head(nullptr), tail(nullptr) {}
-
+    TPQueue() : hd(nullptr), tl(nullptr) {}
     ~TPQueue();
-
     void push(const T &);
-
     T pop();
-
-    void rmTail();
+    void Trmil();
 };
 template<typename T>
+typename TPQueue<T>::VAL *TPQueue<T>::create(const T &data) {
+    VAL *pVal = new VAL;
+    pVal->data = data;
+    pVal->next = nullptr;
+    return pVal;
+}
+template<typename T>
 void TPQueue<T>::push(const T &data) {
-    if (head == nullptr) {
-        tail = create(data);
-        head = tail;
-    } else if (head == tail) {
-        if (tail->data.prior < data.prior) {
-            tail->next = create(data);
-            tail = tail->next;
+    if (hd == nullptr) {
+        tl = create(data);
+        hd = tl;
+    } else if (hd == tl) {
+        if (tl->data.prior < data.prior) {
+            tl->next = create(data);
+            tl = tl->next;
         } else {
-            VAL *tempo = head;
-            head = create(data);
-            head->next = tempo;
+            VAL *tempo = hd;
+            hd = create(data);
+            hd->next = tempo;
         }
     } else {
-        VAL *temp = head;
-        if (data.prior > tail->data.prior) {
-            tail->next = create(data);
-            tail = tail->next;
-        } else if (data.prior < head->data.prior) {
-            VAL *t = head;
-            head = create(data);
-            head->next = t;
+        VAL *temp = hd;
+        if (data.prior > tl->data.prior) {
+            tl->next = create(data);
+            tl = tl->next;
+        } else if (data.prior < hd->data.prior) {
+            VAL *t = hd;
+            hd = create(data);
+            hd->next = t;
         } else {
             while (data.prior > temp->next->data.prior) {
                 temp = temp->next;
@@ -61,5 +62,47 @@ void TPQueue<T>::push(const T &data) {
         }
     }
 }
+template<typename T>
+void TPQueue<T>::Trmil() {
+    if (hd == nullptr) {
+        return;
+    }
+    if (hd == tl) {
+        delete hd;
+        hd = tl = nullptr;
+    } else {
+        VAL* temp = hd;
+        while (temp->next != tl) {
+            temp = temp->next;
+        }
+        delete tl;
+        tl = temp;
+        tl->next = nullptr;
+    }
+}
+template<typename T>
+T TPQueue<T>::pop() {
+    if (hd == nullptr) {
+        throw std::out_of_range("Queue is empty. Cannot pop element.");
+    }
+    T temp = hd->data;
+    VAL* oldHead = hd;
+    hd = hd->next;
+    if (hd == nullptr) {
+        tl = nullptr;
+    }
+    delete oldHead;
+    return temp;
+}
+template<typename T>
+TPQueue<T>::~TPQueue() {
+    while (tl) {
+        pop();
+    }
+}
+struct SYM {
+    char ch;
+    int prior;
+};
 
 #endif  // INCLUDE_TPQUEUE_H_
