@@ -3,7 +3,6 @@
 #define INCLUDE_TPQUEUE_H_
 
 #include <cstdint>
-#include <stdexcept>
 
 template<typename T>
 class TPQueue {
@@ -12,16 +11,24 @@ class TPQueue {
         T data;
         VAL *next;
     };
+
     TPQueue::VAL *create(const T &);
+
     VAL *hd;
     VAL *tl;
+
  public:
     TPQueue() : hd(nullptr), tl(nullptr) {}
+
     ~TPQueue();
+
     void push(const T &);
+
     T pop();
+
     void Trmil();
 };
+
 template<typename T>
 typename TPQueue<T>::VAL *TPQueue<T>::create(const T &data) {
     VAL *pVal = new VAL;
@@ -29,6 +36,7 @@ typename TPQueue<T>::VAL *TPQueue<T>::create(const T &data) {
     pVal->next = nullptr;
     return pVal;
 }
+
 template<typename T>
 void TPQueue<T>::push(const T &data) {
     if (hd == nullptr) {
@@ -82,24 +90,20 @@ void TPQueue<T>::Trmil() {
 }
 template<typename T>
 T TPQueue<T>::pop() {
-    if (hd == nullptr) {
-        throw std::out_of_range("Queue is empty. Cannot pop element.");
-    }
-    T temp = hd->data;
-    VAL* oldHead = hd;
-    hd = hd->next;
-    if (hd == nullptr) {
-        tl = nullptr;
-    }
-    delete oldHead;
+    T temp = tl->data;
+    Trmil();
     return temp;
 }
+
 template<typename T>
 TPQueue<T>::~TPQueue() {
     while (tl) {
         pop();
     }
 }
+
+
+
 struct SYM {
     char ch;
     int prior;
